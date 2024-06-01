@@ -11,7 +11,7 @@ export function Label(props) {
         return null;
 
     return (
-        <label className={props.required ? 'rjf-required' : null}>
+        <label className={props.required ? 'rjf-required' : null} htmlFor={props.htmlFor ? props.htmlFor : null}>
             {props.children}
             {props.children && ' '}
             {props.label}
@@ -45,6 +45,59 @@ export function FormInput({label, help_text, error, inputRef, ...props}) {
             <Label label={label} required={props.required} />
             <div className={error ? "rjf-input-group has-error" : "rjf-input-group"}>
                 {props.children || <input {...props} />}
+                {error && error.map((error, i) => <span className="rjf-error-text" key={i}>{error}</span>)}
+                {help_text && <span className="rjf-help-text">{help_text}</span>}
+            </div>
+        </div>
+    );
+}
+
+export function FileBrowserInput({label, help_text, error, inputRef, ...props}) {
+
+    if (props.type === 'filebrowser')
+        props.type = 'text';
+
+    props = {...props, ...{
+        className: 'vFileBrowseField',
+        id: `id_${props.name}`
+    }}
+
+    const onClickStr = (e) => {
+        e.preventDefault
+        const el = e.target || e.srcElement
+        const inputId = el.parentNode.parentNode.getElementsByTagName('input')[0].id
+
+        window.FileBrowser.show(inputId, '/admin/filebrowser/browse/?pop=1');
+    }
+
+    if (inputRef)
+        props.ref = inputRef;
+
+    if (props.value === null)
+        props.value = '';
+
+    let wrapperProps = {};
+    if (props.type == 'hidden')
+        wrapperProps['style'] = {display:  'none'};
+
+    // readonly inputs are automatically marked disabled
+    // if this is undesired, explicitly pass disabled=false
+    if (props.readOnly && (props.disabled === undefined || props.disabled === null))
+        props.disabled = true;
+
+    return (
+        <div {...wrapperProps}>
+            <Label label={label} required={props.required} htmlFor={props.id} />
+            <div className={error ? "rjf-input-group has-error" : "rjf-input-group"}>
+                {props.children || <input {...props} />}
+                <a href="javascript:void(0)" onClick={onClickStr} className="fb_show">
+                     <img src="/static/filebrowser/img/filebrowser_icon_show.gif" alt="Change" />
+                </a>
+                <p className="preview" id={"preview_" + props.id} style={{ display: "none" }}>
+                    <a href="javascript://" target="_self" id={"previewlink_" + props.id}>
+                        <img id={"previewimage_" + props.id} className="preview" src="" />
+                    </a>
+                </p>
                 {error && error.map((error, i) => <span className="rjf-error-text" key={i}>{error}</span>)}
                 {help_text && <span className="rjf-help-text">{help_text}</span>}
             </div>

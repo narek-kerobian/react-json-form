@@ -6,6 +6,7 @@ import {Button, FormInput, FormCheckInput, FormRadioInput, FormSelectInput,
     FormDateTimeInput, FormMultiSelectInput, FileUploader, AutoCompleteInput, FormURLInput} from './components';
 import {getVerboseName, convertType, getCoordsFromName, getKeyword, normalizeKeyword,
     joinCoords, splitCoords, actualType, getSchemaType, isEqualset, isSubset} from './util';
+import {FileBrowserInput} from './components/form';
 
 
 function handleChange(e, fieldType, callback) {
@@ -87,6 +88,8 @@ function FormField(props) {
                     InputField = FormFileInput;
                 } else if (format === 'file-url') {
                     InputField = FileUploader;
+                } else if (format === 'filebrowser') {
+                    InputField = FileBrowserInput;
                 } else if (normalizeKeyword(format) === 'date-time') {
                     InputField = FormDateTimeInput;
                 } else if (format === 'uri' || format === 'uri-reference') {
